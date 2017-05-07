@@ -20,10 +20,11 @@ async function run() {
 }
 
 function reverseResults(teams) {
-	let numberOfDrivers = teams.reduce((a, b) => {
-		console.log(a, b)
-		return {drivers: a.drivers.concat(b.drivers)}
-	}, {drivers: []}).drivers.length + 1
+	let numberOfDrivers = 20
+	//let numberOfDrivers = teams.reduce((a, b) => {
+	//	console.log(a, b)
+	//	return {drivers: a.drivers.concat(b.drivers)}
+	//}, {drivers: []}).drivers.length + 1
 
 
 	let ret = []
