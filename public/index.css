@@ -1,0 +1,63 @@
+html {
+}
+li {
+	list-style-type: none;
+}
+
+ul {
+	padding: 0px;
+	max-width: 75%;
+	margin: 0 auto;
+}
+
+.title {
+	color: white;
+	font-weight: bold;
+	font-size: 20px;
+	display: inline-block;
+}
+.position {
+	color: red;
+	margin: 0px 10px;
+}
+
+.results-open {
+	color: white;
+	cursor: pointer;
+	margin: 0px 10px;
+	transition: color .25s;
+}
+
+.name {
+	color: white;
+}
+
+.results-open:hover {
+	color: black;
+}
+
+.points {
+	font-size: 20px;
+	display: inline-block;
+	float: right;
+	color: black;
+	margin-left: 10px;
+}
+
+.results {
+	margin: 0;
+	padding: 10px;
+	display: none;
+}
+
+.results table {
+	text-align: left;
+}
+
+.standing {
+	padding-right: 10px;
+	font-family: monospace;
+	margin: 10px 0px;
+	background-color: grey;
+	box-shadow: -1px 1px 1px grey;
+}
