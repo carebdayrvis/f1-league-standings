@@ -1,3 +1,4 @@
+const pug = require("pug")
 const fs = require("fs")
 const api = require("./api")
 const teams = JSON.parse(fs.readFileSync("./teams.json").toString())
@@ -12,8 +13,9 @@ async function run() {
 		let results = await api.results(sched)
 		let fantasyStandings = standings(results, teams)
 
-		api.cache("k:standings", JSON.stringify(fantasyStandings))
-		
+		let html = pug.renderFile("index.pug", {standings: fantasyStandings})
+
+		fs.writeFileSync("./index.html", html)
 	} catch(e) {
 		console.error("error", e)
 	}
@@ -47,7 +49,6 @@ function pointsSort(a, b) {
 function standings(results, teams) {
 	let reversedResults = reverseResults(teams)
 
-	console.log(reversedResults)
 	return teams.map(t => {
 		let pointsSoFar = 0
 		t.results = []
