@@ -15,9 +15,8 @@ async function run() {
 
 		let html = pug.renderFile("index.pug", {standings: fantasyStandings})
 
-		fs.writeFileSync("./index.html", html)
+		console.log(html)
 	} catch(e) {
-		console.error("error", e)
 	}
 }
 

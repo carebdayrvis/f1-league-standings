@@ -77,7 +77,6 @@ module.exports = class Api {
 				client.quit()
 				if (err) return reject(err)
 				if (!val) return reject()
-				console.log("getting cached", key)
 				resolve(JSON.parse(val))
 			})
 		})
