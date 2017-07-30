@@ -17,6 +17,7 @@ async function run() {
 
 		console.log(html)
 	} catch(e) {
+		console.error(e)
 	}
 }
 
@@ -52,16 +53,29 @@ function standings(results, teams) {
 		let pointsSoFar = 0
 		t.results = []
 		results.forEach(r => {
+			if (r.noresults) return
+			if (!r.ResultsList) return
 			let race = r.RaceName[0]
 			let racePoints = 0
 			let teamResult = []
 			r.ResultsList[0].Result.forEach((result, i) => {
+				let belongs = false
 				let driver = result.Driver[0]
-				let driverNum = parseInt(driver.PermanentNumber[0])
-				if (t.drivers.indexOf(driverNum) > -1) {
-					teamResult.push({driver: {name: driver["$"].code, num: driverNum}, position: i + 1, points: reversedResults[i]})
-					pointsSoFar += reversedResults[i]
-					racePoints += reversedResults[i]
+
+				if (!driver.PermanentNumber) {
+					driverIdentifier = driver['$'].driverId
+					if (t.driversByDriverID && t.driversByDriverID[driverIdentifier]) {
+						teamResult.push({driver: {name: driver["$"].code, num: t.driversByDriverID[driverIdentifier]}, position: i + 1, points: reversedResults[i]})
+						pointsSoFar += reversedResults[i]
+						racePoints += reversedResults[i]
+					}
+				} else {
+					driverIdentifier = parseInt(driver.PermanentNumber[0])
+					if (t.drivers.indexOf(driverIdentifier) > -1) {
+						teamResult.push({driver: {name: driver["$"].code, num: driverIdentifier}, position: i + 1, points: reversedResults[i]})
+						pointsSoFar += reversedResults[i]
+						racePoints += reversedResults[i]
+					}
 				}
 			})
 			t.results.push({race: race, points: racePoints, result: teamResult.sort(pointsSort)})

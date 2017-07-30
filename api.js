@@ -53,13 +53,16 @@ module.exports = class Api {
 		} catch(e) {
 			return new Promise((resolve, reject) => {
 				let url = `${Api.host}/${year}/${raceNum}/results`
-				return got(url).then(res => xml.parseString(res.body, (err, val) => {
-					if (err) reject(err)
-					let race = val.MRData.RaceTable[0].Race[0]
-			
-					Api.cache(key, JSON.stringify(race))
-					return resolve(val)
-				}))
+				return got(url).then(res => {
+					xml.parseString(res.body, (err, val) => {
+						if (err) reject(err)
+						if (val.MRData["$"].total == "0") return resolve({noresults: true})
+						let race = val.MRData.RaceTable[0].Race[0]
+				
+						Api.cache(key, JSON.stringify(race))
+						return resolve(val)
+					})
+				})
 				.catch(e => reject(e))
 			})
 		}
