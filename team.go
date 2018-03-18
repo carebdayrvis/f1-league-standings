@@ -48,14 +48,17 @@ type Team struct {
 type Result struct {
 	FastestLapDuration string
 	Result             ergast.Result
+	QualifyingPosition int
 	Score              int
 }
 
 type Race struct {
-	Race            ergast.Race
-	Score           int
-	Results         []Result
-	FastestLapPoint bool
+	Race             ergast.Race
+	Score            int
+	Results          []Result
+	FastestLapPoint  bool
+	LastInQualyPoint bool
+	Modifier         string
 }
 
 func (t *Team) CalculateResults(results []ergast.Race) {
@@ -77,11 +80,30 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 
 	for _, race := range results {
 
+		qualyByDriver := map[string]int{}
+
 		fastestLapPoint := false
+		lastInQualyPoint := false
 
 		reversedScores := ReversedScores(len(results))
 		teamResults := []Result{}
 		raceScore := 0
+
+		for _, qresult := range race.QualifyingResults {
+			_, hasDriverByNumber := driverMap[qresult.Driver.PermanentNumber]
+			_, hasDriverByID := driverIDMap[qresult.Driver.DriverID]
+
+			if !hasDriverByNumber && !hasDriverByID {
+				continue
+			}
+
+			qualyByDriver[qresult.Driver.DriverID] = qresult.Position
+
+			if qresult.Position == len(results) {
+				lastInQualyPoint = true
+				raceScore += 1
+			}
+		}
 
 		for _, result := range race.Results {
 
@@ -96,6 +118,7 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 				Result:             result,
 				Score:              reversedScores[result.Position-1],
 				FastestLapDuration: FormatDuration(result.FastestLap.Time),
+				QualifyingPosition: qualyByDriver[result.Driver.DriverID],
 			}
 
 			if r.Result.FastestLap.Rank == 1 {
@@ -113,11 +136,14 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 		// zero out results
 		race.Results = []ergast.Result{}
 		teamRace := Race{
-			Race:            race,
-			Score:           raceScore,
-			Results:         teamResults,
-			FastestLapPoint: fastestLapPoint,
+			Race:             race,
+			Score:            raceScore,
+			Results:          teamResults,
+			FastestLapPoint:  fastestLapPoint,
+			LastInQualyPoint: lastInQualyPoint,
 		}
+
+		teamRace.Modifier = FormatModifier(teamRace)
 
 		teamRaces = append(teamRaces, teamRace)
 	}
@@ -143,6 +169,23 @@ func ReversedScores(numResults int) []int {
 	}
 
 	return reversedScores
+}
+
+func FormatModifier(r Race) string {
+
+	if !r.FastestLapPoint && !r.LastInQualyPoint {
+		return ""
+	}
+
+	if !r.FastestLapPoint && r.LastInQualyPoint {
+		return "(+1 for last in qualifying)"
+	} else if r.FastestLapPoint && !r.LastInQualyPoint {
+		return "(+1 for fastest lap)"
+	} else if r.FastestLapPoint && r.LastInQualyPoint {
+		return "(+1 for fastest lap, and last in qualifying)"
+	}
+
+	return ""
 }
 
 func FormatDuration(e ergast.ErgastDuration) string {

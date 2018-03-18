@@ -171,6 +171,13 @@ func loadResult(season int, round int) (ergast.Race, error) {
 		return ergast.Race{}, err
 	}
 
+	qualy, err := ergast.SpecificQualifying(season, round)
+	if err != nil {
+		return ergast.Race{}, err
+	}
+
+	race.QualifyingResults = qualy.QualifyingResults
+
 	b, err = json.Marshal(race)
 	if err != nil {
 		return ergast.Race{}, err

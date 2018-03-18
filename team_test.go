@@ -46,3 +46,43 @@ func TestReversedScores(t *testing.T) {
 		assert.Equal(t, e, ReversedScores(20))
 	})
 }
+
+func TestFormatModifier(t *testing.T) {
+
+	t.Run("both", func(t *testing.T) {
+		r := Race{
+			FastestLapPoint:  true,
+			LastInQualyPoint: true,
+		}
+
+		assert.Equal(t, "(+1 for fastest lap, and last in qualifying)", FormatModifier(r))
+
+	})
+
+	t.Run("neither", func(t *testing.T) {
+		r := Race{
+			FastestLapPoint:  false,
+			LastInQualyPoint: false,
+		}
+
+		assert.Equal(t, "", FormatModifier(r))
+	})
+
+	t.Run("fastest", func(t *testing.T) {
+		r := Race{
+			FastestLapPoint:  true,
+			LastInQualyPoint: false,
+		}
+
+		assert.Equal(t, "(+1 for fastest lap)", FormatModifier(r))
+	})
+
+	t.Run("qualy", func(t *testing.T) {
+		r := Race{
+			FastestLapPoint:  false,
+			LastInQualyPoint: true,
+		}
+
+		assert.Equal(t, "(+1 for last in qualifying)", FormatModifier(r))
+	})
+}
