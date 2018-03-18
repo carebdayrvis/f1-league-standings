@@ -109,6 +109,10 @@ func loadResults(season int) ([]ergast.Race, error) {
 			return []ergast.Race{}, err
 		}
 
+		if result.NoResults {
+			continue
+		}
+
 		results = append(results, result)
 	}
 
@@ -169,6 +173,10 @@ func loadResult(season int, round int) (ergast.Race, error) {
 	race, err := ergast.SpecificResult(season, round)
 	if err != nil {
 		return ergast.Race{}, err
+	}
+
+	if race.NoResults {
+		return race, err
 	}
 
 	qualy, err := ergast.SpecificQualifying(season, round)
