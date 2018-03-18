@@ -74,7 +74,7 @@
 
             .results table {
                 text-align: left;
-                font-size: 26px;
+                font-size: 24px;
             }
 
             .standing {
@@ -83,6 +83,14 @@
                 margin: 10px 0px;
                 background-color: grey;
                 box-shadow: -1px 1px 1px grey;
+            }
+
+            table {
+                border-spacing: 16px;
+            }
+
+            td {
+                text-align: right;
             }
         </style>
             <ul>
@@ -102,17 +110,28 @@
                         <li>
                             <span class="name">{{ .Race.RaceName }} - </span>
                             <span>{{ .Score }} points</span>
+                            {{ if .FastestLapPoint }}<span>(+1 for fastest lap)</span>{{ end }}
                             <table>
                                 <tr>
                                     <th>Pos</th>
                                     <th>Driver</th>
                                     <th>Points</th>
+                                    <th>Fastest Lap Time</th>
+                                    <th>Fastest Lap Rank</th>
+                                    <th>Fastest Lap #</th>
+                                    <th>Completed Laps</th>
+                                    <th>Status</th>
                                 </tr>
                                 {{ range .Results }}
                                     <tr>
                                         <td>{{ .Result.Position }}</td>
                                         <td>{{ .Result.Driver.Code }}</td>
                                         <td>{{ .Score }}</td>
+                                        <td>{{ .FastestLapDuration }}</td>
+                                        <td>{{ .Result.FastestLap.Rank }}</td>
+                                        <td>{{ .Result.FastestLap.Lap }}</td>
+                                        <td>{{ .Result.Laps }}</td>
+                                        <td>{{ .Result.Status }}</td>
                                     </tr>
                                  {{ end }}
                              </table>

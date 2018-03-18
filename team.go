@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/carebdayrvis/go-ergast"
 	"sort"
 	"time"
@@ -45,16 +46,16 @@ type Team struct {
 }
 
 type Result struct {
-	Result ergast.Result
-	Score  int
+	FastestLapDuration string
+	Result             ergast.Result
+	Score              int
 }
 
 type Race struct {
-	Race             ergast.Race
-	Score            int
-	Results          []Result
-	FastestLap       ergast.Lap
-	FastestLapDriver ergast.Driver
+	Race            ergast.Race
+	Score           int
+	Results         []Result
+	FastestLapPoint bool
 }
 
 func (t *Team) CalculateResults(results []ergast.Race) {
@@ -76,8 +77,7 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 
 	for _, race := range results {
 
-		var fastestLap *ergast.Lap
-		var fastestLapDriver ergast.Driver
+		fastestLapPoint := false
 
 		reversedScores := ReversedScores(len(results))
 		teamResults := []Result{}
@@ -93,13 +93,14 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 			}
 
 			r := Result{
-				Result: result,
-				Score:  reversedScores[result.Position-1],
+				Result:             result,
+				Score:              reversedScores[result.Position-1],
+				FastestLapDuration: FormatDuration(result.FastestLap.Time),
 			}
 
 			if r.Result.FastestLap.Rank == 1 {
-				fastestLap = &r.Result.FastestLap
-				fastestLapDriver = r.Result.Driver
+				fastestLapPoint = true
+				raceScore += 1
 			}
 
 			raceScore += r.Score
@@ -112,14 +113,10 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 		// zero out results
 		race.Results = []ergast.Result{}
 		teamRace := Race{
-			Race:             race,
-			Score:            raceScore,
-			Results:          teamResults,
-			FastestLapDriver: fastestLapDriver,
-		}
-
-		if fastestLap != nil {
-			teamRace.FastestLap = *fastestLap
+			Race:            race,
+			Score:           raceScore,
+			Results:         teamResults,
+			FastestLapPoint: fastestLapPoint,
 		}
 
 		teamRaces = append(teamRaces, teamRace)
@@ -146,4 +143,18 @@ func ReversedScores(numResults int) []int {
 	}
 
 	return reversedScores
+}
+
+func FormatDuration(e ergast.ErgastDuration) string {
+
+	d, _ := time.ParseDuration(e.String())
+
+	m := d / time.Minute
+	d -= m * time.Minute
+	s := d / time.Second
+	d -= s * time.Second
+	ms := d / time.Millisecond
+
+	return fmt.Sprintf("%02d:%02d.%02d", m, s, ms)
+
 }
