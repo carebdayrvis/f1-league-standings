@@ -1,0 +1,117 @@
+
+html
+    head
+        title F1 League Standings
+
+        script(type="text/javascript").
+            function toggleResults(event) {
+                var standing = event.target.parentNode.parentNode
+                var results = standing.children[2]
+                var currentDisplay = results.style.display
+                console.log(currentDisplay)
+                if (currentDisplay == "none" || currentDisplay == "") {
+                    results.style.display = "block"
+                } else {
+                    results.style.display = "none"
+                }
+                
+            }
+            
+    body
+        style(type="text/css").
+            html {
+                font-size: 36px;
+            }
+            li {
+                list-style-type: none;
+            }
+
+            ul {
+                padding: 0px;
+                max-width: 75%;
+                margin: 0 auto;
+            }
+
+            .title {
+                color: white;
+                font-weight: bold;
+                display: inline-block;
+            }
+            .position {
+                color: red;
+                margin: 0px 10px;
+            }
+
+            .results-open {
+                color: white;
+                cursor: pointer;
+                margin: 0px 10px;
+                transition: color .25s;
+            }
+
+            .name {
+                color: white;
+            }
+
+            .results-open:hover {
+                color: black;
+            }
+
+            .points {
+                display: inline-block;
+                float: right;
+                color: black;
+                margin-left: 10px;
+            }
+
+            .results {
+                margin: 0;
+                padding: 10px;
+                display: none;
+                font-size: 26px;
+            }
+
+            .results table {
+                text-align: left;
+                font-size: 26px;
+            }
+
+            .standing {
+                padding-right: 10px;
+                font-family: monospace;
+                margin: 10px 0px;
+                background-color: grey;
+                box-shadow: -1px 1px 1px grey;
+            }
+
+        ul
+            each team, i in standings
+                li(class="standing")
+                    div(class="title")
+                        span(class="position")=(i+1)
+                        span=team.name
+                    div(class="points")
+                        span=team.points
+                            |  points
+                        span(title="View Results" class="results-open" onclick="toggleResults(event)") +
+                        
+
+
+
+                    ul(class="results")
+                        each result in team.results
+                            li
+                                span(class="name")=result.race
+                                    |  - 
+                                span=result.points
+                                    |  points
+                                table
+                                    tr
+                                        th Pos
+                                        th Driver
+                                        th Points
+                                    each r in result.result
+                                        tr
+                                            td=r.position
+                                            td=r.driver.name
+                                            td=r.points

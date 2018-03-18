@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <title>F1 League Standings</title>
+
+        <script type="text/javascript">
+            function toggleResults(event) {
+                var standing = event.target.parentNode.parentNode
+                var results = standing.children[2]
+                var currentDisplay = results.style.display
+                if (currentDisplay == "none" || currentDisplay == "") {
+                    results.style.display = "block"
+                } else {
+                    results.style.display = "none"
+                }
+                
+            }
+         </script>
+
+
+
+    <body>
+        <style>
+            html {
+                font-size: 36px;
+            }
+            li {
+                list-style-type: none;
+            }
+
+            ul {
+                padding: 0px;
+                max-width: 75%;
+                margin: 0 auto;
+            }
+
+            .title {
+                color: white;
+                font-weight: bold;
+                display: inline-block;
+            }
+            .position {
+                color: red;
+                margin: 0px 10px;
+            }
+
+            .results-open {
+                color: white;
+                cursor: pointer;
+                margin: 0px 10px;
+                transition: color .25s;
+            }
+
+            .name {
+                color: white;
+            }
+
+            .results-open:hover {
+                color: black;
+            }
+
+            .points {
+                display: inline-block;
+                float: right;
+                color: black;
+                margin-left: 10px;
+            }
+
+            .results {
+                margin: 0;
+                padding: 10px;
+                display: none;
+                font-size: 26px;
+            }
+
+            .results table {
+                text-align: left;
+                font-size: 26px;
+            }
+
+            .standing {
+                padding-right: 10px;
+                font-family: monospace;
+                margin: 10px 0px;
+                background-color: grey;
+                box-shadow: -1px 1px 1px grey;
+            }
+        </style>
+            <ul>
+            {{ range $index, $team := .Teams }}
+                <li class="standing">
+                    <div class="title">
+                        <span class="position">{{ $team.Standing }}</span>
+                        <span>{{ $team.Name }}</span>
+                    </div>
+                    <div class="points">
+                        <span>{{ $team.Score }} points</span>
+                        <span title="View Results" class="results-open" onclick="toggleResults(event)">+</span>
+                    </div>
+
+                    <ul class="results">
+                    {{ range $team.Races }}
+                        <li>
+                            <span class="name">{{ .Race.RaceName }} - </span>
+                            <span>{{ .Score }} points</span>
+                            <table>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Driver</th>
+                                    <th>Points</th>
+                                </tr>
+                                {{ range .Results }}
+                                    <tr>
+                                        <td>{{ .Result.Position }}</td>
+                                        <td>{{ .Result.Driver.Code }}</td>
+                                        <td>{{ .Score }}</td>
+                                    </tr>
+                                 {{ end }}
+                             </table>
+                         </li>
+                    {{ end }}
+                    </ul>
+                </li>
+            {{ end }}
+            </ul>
+    </body>
+</html>
+
