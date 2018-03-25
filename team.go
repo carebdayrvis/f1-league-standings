@@ -85,7 +85,8 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 		fastestLapPoint := false
 		lastInQualyPoint := false
 
-		reversedScores := ReversedScores(len(results))
+		reversedScores := ReversedScores(len(race.Results))
+
 		teamResults := []Result{}
 		raceScore := 0
 
@@ -99,7 +100,7 @@ func (t *Team) CalculateResults(results []ergast.Race) {
 
 			qualyByDriver[qresult.Driver.DriverID] = qresult.Position
 
-			if qresult.Position == len(results) {
+			if qresult.Position == len(race.Results) {
 				lastInQualyPoint = true
 				raceScore += 1
 			}
